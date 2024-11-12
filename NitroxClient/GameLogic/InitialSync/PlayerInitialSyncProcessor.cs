@@ -1,6 +1,8 @@
 using System.Collections;
+using System.Collections.Generic;
 using NitroxClient.GameLogic.InitialSync.Abstract;
 using NitroxClient.MonoBehaviours;
+using NitroxModel_Subnautica.DataStructures;
 using NitroxModel.DataStructures;
 using NitroxModel.DataStructures.GameLogic;
 using NitroxModel.Server;
@@ -30,6 +32,7 @@ public class PlayerInitialSyncProcessor : InitialSyncProcessor
         AddStep(sync => SetPlayerPermissions(sync.Permissions));
         AddStep(sync => SetPlayerGameObjectId(sync.PlayerGameObjectId));
         AddStep(sync => AddStartingItemsToPlayer(sync.FirstTimeConnecting));
+        AddStep(sync => AddItemsUsed(sync.UsedItems));
         AddStep(sync => SetPlayerStats(sync.PlayerStatsData));
         AddStep(sync => SetPlayerGameMode(sync.GameMode));
     }
@@ -65,6 +68,14 @@ public class PlayerInitialSyncProcessor : InitialSyncProcessor
                 item.Created(gameObject);
                 itemContainers.AddItem(gameObject, localPlayerId);
             }
+        }
+    }
+
+    private void AddItemsUsed(List<NitroxTechType> usedItems)
+    {
+        foreach (NitroxTechType used in usedItems)
+        {
+            Player.main.AddUsedTool(used.ToUnity());
         }
     }
 
